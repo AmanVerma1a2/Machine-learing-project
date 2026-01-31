@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis - AI Powered</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>Sentiment Analysis</h1>
+            </div>
+            <p class="tagline">Sentiment Detector</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-comment-dots"></i>
+                    <h2>Analyze Your Text</h2>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Text Input Area -->
+                    <div class="input-section">
+                        <label for="textInput">
+                            <i class="fas fa-pen"></i> Enter your text below:
+                        </label>
+                        <textarea 
+                            id="textInput" 
+                            placeholder="Type or paste your text here... (e.g., 'I love this product! It's amazing!')"
+                            rows="6"
+                        ></textarea>
+                        <div class="char-count">
+                            <span id="charCount">0</span> characters
+                        </div>
+                    </div>
+
+                    <!-- Analyze Button -->
+                    <button id="analyzeBtn" class="btn-analyze">
+                        <i class="fas fa-chart-line"></i>
+                        Analyze Sentiment
+                    </button>
+
+                    <!-- Loading Spinner -->
+                    <div id="loading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing...</p>
+                    </div>
+
+                    <!-- Result Section -->
+                    <div id="resultSection" class="result-section">
+                        <h3><i class="fas fa-poll"></i> Analysis Results - All Models</h3>
+                        
+                        <!-- Multi-Model Results Grid -->
+                        <div id="multiModelResults" class="multi-model-grid">
+                            <!-- Results will be inserted here dynamically -->
+                        </div>
+
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <strong><i class="fas fa-align-left"></i> Original Text:</strong>
+                                <p id="originalText"></p>
+                            </div>
+                            <div class="detail-item">
+                                <strong><i class="fas fa-filter"></i> Processed Text:</strong>
+                                <p id="processedText"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorSection" class="error-section">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p id="errorText"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Section -->
+            <div class="examples-section">
+                <h3><i class="fas fa-lightbulb"></i> Try These Examples</h3>
+                <div class="example-buttons">
+                    <button class="btn-example" data-text="I absolutely love this product! It's amazing and works perfectly!">
+                        <i class="fas fa-heart"></i> Positive Example
+                    </button>
+                    <button class="btn-example" data-text="This is terrible and I hate it!">
+                        <i class="fas fa-thumbs-down"></i> Negative Example
+                    </button>
+                    <button class="btn-example" data-text="The temperature is currently 20 degrees Celsius.">
+                        <i class="fas fa-circle"></i> Neutral Example
+                    </button>
+                    <button class="btn-example" data-text="The meeting starts at noon tomorrow">
+                        <i class="fas fa-info-circle"></i> Another Neutral
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <i class="fas fa-robot"></i> Powered by 4 Machine Learning Algorithms
+            </p>
+            <p class="tech-stack">
+                Naive Bayes | Logistic Regression | Linear SVM | Random Forest
+            </p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
