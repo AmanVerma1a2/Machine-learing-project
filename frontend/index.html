@@ -10,33 +10,31 @@
 <body>
     <div class="container">
         <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <i class="fas fa-brain"></i>
-                <h1>Sentiment Analysis</h1>
-            </div>
-            <p class="tagline">Sentiment Detector</p>
-        </header>
+      <header class="header">
+    <div class="logo">
+        <h1>Sentiment Analysis</h1>
+    </div>
+    <p class="tagline">Sentiment Detector</p>
+</header>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-comment-dots"></i>
-                    <h2>Analyze Your Text</h2>
-                </div>
+    <main class="main-content">
+    <div class="card">
+        <div class="card-header">
+            <h2>Analyze Your Text</h2>
+        </div>
                 
                 <div class="card-body">
                     <!-- Text Input Area -->
-                    <div class="input-section">
-                        <label for="textInput">
-                            <i class="fas fa-pen"></i> Enter your text below:
-                        </label>
-                        <textarea 
-                            id="textInput" 
-                            placeholder="Type or paste your text here... (e.g., 'I love this product! It's amazing!')"
-                            rows="6"
-                        ></textarea>
+                   <div class="input-section">
+    <label for="textInput">
+        Enter your text below:
+    </label>
+    <textarea 
+        id="textInput" 
+        placeholder="Type or paste your text here... (e.g., 'I love this product! It's amazing!')"
+        rows="6"
+    ></textarea>
                         <div class="char-count">
                             <span id="charCount">0</span> characters
                         </div>
@@ -44,7 +42,7 @@
 
                     <!-- Analyze Button -->
                     <button id="analyzeBtn" class="btn-analyze">
-                        <i class="fas fa-chart-line"></i>
+                   
                         Analyze Sentiment
                     </button>
 
@@ -83,35 +81,13 @@
                 </div>
             </div>
 
-            <!-- Examples Section -->
-            <div class="examples-section">
-                <h3><i class="fas fa-lightbulb"></i> Try These Examples</h3>
-                <div class="example-buttons">
-                    <button class="btn-example" data-text="I absolutely love this product! It's amazing and works perfectly!">
-                        <i class="fas fa-heart"></i> Positive Example
-                    </button>
-                    <button class="btn-example" data-text="This is terrible and I hate it!">
-                        <i class="fas fa-thumbs-down"></i> Negative Example
-                    </button>
-                    <button class="btn-example" data-text="The temperature is currently 20 degrees Celsius.">
-                        <i class="fas fa-circle"></i> Neutral Example
-                    </button>
-                    <button class="btn-example" data-text="The meeting starts at noon tomorrow">
-                        <i class="fas fa-info-circle"></i> Another Neutral
-                    </button>
-                </div>
-            </div>
+          
         </main>
 
         <!-- Footer -->
-        <footer class="footer">
-            <p>
-                <i class="fas fa-robot"></i> Powered by 4 Machine Learning Algorithms
-            </p>
-            <p class="tech-stack">
-                Naive Bayes | Logistic Regression | Linear SVM | Random Forest
-            </p>
-        </footer>
+     <footer class="footer">
+    <p>© 2026 Sentiment Analysis</p>
+</footer>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
