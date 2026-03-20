@@ -6,6 +6,7 @@ const loading = document.getElementById('loading');
 const resultSection = document.getElementById('resultSection');
 const errorSection = document.getElementById('errorSection');
 const multiModelResults = document.getElementById('multiModelResults');
+const bestModelSummary = document.getElementById('bestModelSummary');
 const originalText = document.getElementById('originalText');
 const processedText = document.getElementById('processedText');
 const errorText = document.getElementById('errorText');
@@ -84,9 +85,19 @@ analyzeBtn.addEventListener('click', async () => {
 function displayResult(data) {
     // Clear previous results
     multiModelResults.innerHTML = '';
+    bestModelSummary.innerHTML = '';
     
     // Check if we have predictions array
     if (data.predictions && data.predictions.length > 0) {
+        const bestPrediction = getBestPrediction(data.predictions);
+        if (bestPrediction) {
+            bestModelSummary.innerHTML = `
+                <i class="fas fa-trophy"></i>
+                <span><strong>Best Model:</strong> ${bestPrediction.model}</span>
+                <span class="best-confidence">(${bestPrediction.confidence}% confidence)</span>
+            `;
+        }
+
         // Create card for each model
         data.predictions.forEach((pred, index) => {
             const modelCard = createModelCard(pred, index);
@@ -160,6 +171,18 @@ function createModelCard(pred, index) {
     `;
     
     return card;
+}
+
+function getBestPrediction(predictions) {
+    if (!Array.isArray(predictions) || predictions.length === 0) {
+        return null;
+    }
+
+    return predictions.reduce((best, current) => {
+        const currentConfidence = parseFloat(current.confidence) || 0;
+        const bestConfidence = parseFloat(best.confidence) || 0;
+        return currentConfidence > bestConfidence ? current : best;
+    });
 }
 
 // Show error

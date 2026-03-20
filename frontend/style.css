@@ -242,6 +242,27 @@ textarea:focus {
     font-size: 1.5rem;
 }
 
+.best-model-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: var(--secondary-color);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    font-weight: 600;
+}
+
+.best-model-summary i {
+    color: var(--warning-color);
+}
+
+.best-model-summary .best-confidence {
+    font-weight: 700;
+}
+
 .result-card {
     background: var(--light-color);
     border-radius: 12px;
