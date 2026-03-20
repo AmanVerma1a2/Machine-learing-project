@@ -19,6 +19,28 @@ try:
 except ImportError as e:
     print(f"⚠️  deep_translator not available: {e}")
 
+# Common word mappings (fallback for Hinglish/Hindi - Twitter/Sentiment140)
+FALLBACK_DICT = {
+    # Pronouns & verbs
+    'mei': 'i', 'main': 'i', 'muje': 'me', 'mujhe': 'me',
+    'hu': 'am', 'hoon': 'am', 'hun': 'am', 'hai': 'is', 'ho': 'are', 'hain': 'are',
+    
+    # Positive words
+    'acha': 'good', 'ache': 'good', 'achi': 'good', 'badiya': 'great',
+    'amazing': 'amazing', 'awesome': 'awesome', 'best': 'best', 'great': 'great',
+    'love': 'love', 'pyar': 'love', 'laga': 'liked', 'khush': 'happy', 'mast': 'great',
+    
+    # Negative words
+    'bura': 'bad', 'bure': 'bad', 'kharab': 'bad', 'waste': 'waste',
+    'worst': 'worst', 'poor': 'poor', 'hate': 'hate', 'dukhi': 'sad',
+    'boring': 'boring', 'nahi': 'not', 'fake': 'fake',
+    
+    # Common expressions
+    'bahut': 'very', 'bohot': 'very', 'kya': 'what', 'kaise': 'how',
+    'yaar': 'friend', 'bhai': 'brother', 'mera': 'my', 'tera': 'your',
+    'yeh': 'this', 'woh': 'that', 'thanks': 'thanks', 'shukriya': 'thanks',
+}
+
 app = Flask(__name__, template_folder='frontend', static_folder='frontend')
 
 # Load vectorizer and encoder
@@ -48,6 +70,21 @@ for filename, name, icon in model_info:
         print(f"Error loading {filename}: {e}")
 
 print(f"✓ {len(models)} models loaded successfully!")
+
+
+def fallback_word_replace(text):
+    """Simple fallback: replace common Hinglish/Hindi words with English."""
+    words = re.findall(r"\b\w+\b", text.lower())
+    has_hinglish = any(w in FALLBACK_DICT for w in words)
+    
+    if not has_hinglish:
+        return text
+    
+    result = text.lower()
+    for hindi_word, eng_word in FALLBACK_DICT.items():
+        result = re.sub(r'\b' + hindi_word + r'\b', eng_word, result)
+    
+    return result
 
 
 def translate_to_english(text):
@@ -83,7 +120,14 @@ def translate_to_english(text):
     except Exception as e:
         print(f"[Translation] Auto-detect failed: {e}")
     
-    print(f"[Translation] Failed - returning original")
+    # Strategy 3: Fallback to word replacement for Hinglish
+    print(f"[Translation] Using Hinglish fallback mapping")
+    fallback_result = fallback_word_replace(original_text)
+    if fallback_result.lower() != original_text.lower():
+        print(f"[Translation] ✓ Fallback: {fallback_result[:50]}")
+        return fallback_result
+    
+    print(f"[Translation] No translation applied")
     return original_text
 
 def clean_text(text):
