@@ -19,18 +19,6 @@ try:
 except ImportError as e:
     print(f"⚠️  deep_translator not available: {e}")
 
-# Common Hinglish/Hindi to English word mappings (fallback only)
-HINGLISH_DICT = {
-    'mei': 'I', 'acha': 'good', 'hu': 'am', 'main': 'I', 'bura': 'bad',
-    'hoon': 'am', 'hun': 'am', 'hai': 'is', 'ho': 'are', 'hain': 'are',
-    'bahut': 'very', 'nahi': 'not', 'bilkul': 'completely', 'kya': 'what',
-    'kaise': 'how', 'kabhi': 'never', 'kab': 'when', 'yaar': 'friend',
-    'bhai': 'brother', 'kharab': 'bad', 'dukhi': 'sad', 'khush': 'happy',
-    'mast': 'great', 'bekar': 'useless', 'pyar': 'love', 'dil': 'heart',
-    'mera': 'my', 'tera': 'your', 'uska': 'his', 'unka': 'their',
-    'tum': 'you', 'aap': 'you', 'tu': 'you', 'wo': 'he/she',
-}
-
 app = Flask(__name__, template_folder='frontend', static_folder='frontend')
 
 # Load vectorizer and encoder
@@ -62,21 +50,6 @@ for filename, name, icon in model_info:
 print(f"✓ {len(models)} models loaded successfully!")
 
 
-def fallback_word_replace(text):
-    """Simple fallback: replace common Hinglish/Hindi words with English."""
-    words = re.findall(r"\b\w+\b", text.lower())
-    has_hinglish = any(w in HINGLISH_DICT for w in words)
-    
-    if not has_hinglish:
-        return text
-    
-    result = text.lower()
-    for hindi_word, eng_word in HINGLISH_DICT.items():
-        result = re.sub(r'\b' + hindi_word + r'\b', eng_word, result)
-    
-    return result
-
-
 def translate_to_english(text):
     """Translate any input to English before preprocessing."""
     if not text or not text.strip():
@@ -84,37 +57,33 @@ def translate_to_english(text):
 
     original_text = text.strip()
     
-    # Strategy 1: Try Google Translator with auto-detect
-    if TRANSLATOR_AVAILABLE:
-        try:
-            print(f"[Translation] Auto-detecting and translating: {original_text[:50]}")
-            translator = GoogleTranslator(source='auto', target='en')
-            result = translator.translate(original_text)
-            if result and result.strip().lower() != original_text.lower():
-                print(f"[Translation] AUTO success: {result[:50]}")
-                return result.strip()
-        except Exception as e:
-            print(f"[Translation] Auto-detect failed: {e}")
-        
-        # Strategy 2: Try explicitly as Hindi
-        try:
-            print(f"[Translation] Trying Hindi source...")
-            translator = GoogleTranslator(source='hi', target='en')
-            result = translator.translate(original_text)
-            if result and result.strip().lower() != original_text.lower():
-                print(f"[Translation] HINDI source success: {result[:50]}")
-                return result.strip()
-        except Exception as e:
-            print(f"[Translation] Hindi source failed: {e}")
+    if not TRANSLATOR_AVAILABLE:
+        print(f"[Translation] Module not available - returning original")
+        return original_text
     
-    # Strategy 3: Fallback to word replacement for Hinglish
-    print(f"[Translation] Using Hinglish fallback mapping")
-    fallback_result = fallback_word_replace(original_text)
-    if fallback_result.lower() != original_text.lower():
-        print(f"[Translation] Fallback success: {fallback_result[:50]}")
-        return fallback_result
+    # Strategy 1: Try Hindi source first
+    try:
+        print(f"[Translation] Trying Hindi source: {original_text[:50]}")
+        translator = GoogleTranslator(source='hi', target='en')
+        result = translator.translate(original_text)
+        if result and result.strip() and result.strip().lower() != original_text.lower():
+            print(f"[Translation] ✓ Hindi: {result[:50]}")
+            return result.strip()
+    except Exception as e:
+        print(f"[Translation] Hindi failed: {e}")
     
-    print(f"[Translation] No translation applied")
+    # Strategy 2: Try auto-detect
+    try:
+        print(f"[Translation] Trying auto-detect: {original_text[:50]}")
+        translator = GoogleTranslator(source='auto', target='en')
+        result = translator.translate(original_text)
+        if result and result.strip():
+            print(f"[Translation] ✓ Auto: {result[:50]}")
+            return result.strip()
+    except Exception as e:
+        print(f"[Translation] Auto-detect failed: {e}")
+    
+    print(f"[Translation] Failed - returning original")
     return original_text
 
 def clean_text(text):
