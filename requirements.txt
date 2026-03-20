@@ -4,7 +4,5 @@ scikit-learn
 matplotlib
 seaborn
 flask
-joblib
 nltk
-xgboost
 deep-translator
