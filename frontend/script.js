@@ -8,6 +8,7 @@ const errorSection = document.getElementById('errorSection');
 const multiModelResults = document.getElementById('multiModelResults');
 const bestModelSummary = document.getElementById('bestModelSummary');
 const originalText = document.getElementById('originalText');
+const translatedText = document.getElementById('translatedText');
 const processedText = document.getElementById('processedText');
 const errorText = document.getElementById('errorText');
 const exampleButtons = document.querySelectorAll('.btn-example');
@@ -117,6 +118,9 @@ function displayResult(data) {
     
     // Set text details
     originalText.textContent = data.original_text;
+    translatedText.textContent = (data.translated_text && data.translated_text !== data.original_text)
+        ? data.translated_text
+        : 'No translation applied';
     processedText.textContent = data.cleaned_text || 'N/A';
     
     // Show result section
