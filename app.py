@@ -9,37 +9,7 @@ import pickle
 import re
 import numpy as np
 
-GoogleTranslator = None
-TRANSLATOR_AVAILABLE = False
-
-try:
-    from deep_translator import GoogleTranslator
-    TRANSLATOR_AVAILABLE = True
-    print("✓ deep_translator loaded successfully!")
-except ImportError as e:
-    print(f"⚠️  deep_translator not available: {e}")
-
-# Common word mappings (fallback for Hinglish/Hindi - Twitter/Sentiment140)
-FALLBACK_DICT = {
-    # Pronouns & verbs
-    'mei': 'i', 'main': 'i', 'muje': 'me', 'mujhe': 'me',
-    'hu': 'am', 'hoon': 'am', 'hun': 'am', 'hai': 'is', 'ho': 'are', 'hain': 'are',
-    
-    # Positive words
-    'acha': 'good', 'ache': 'good', 'achi': 'good', 'badiya': 'great',
-    'amazing': 'amazing', 'awesome': 'awesome', 'best': 'best', 'great': 'great',
-    'love': 'love', 'pyar': 'love', 'laga': 'liked', 'khush': 'happy', 'mast': 'great',
-    
-    # Negative words
-    'bura': 'bad', 'bure': 'bad', 'kharab': 'bad', 'waste': 'waste',
-    'worst': 'worst', 'poor': 'poor', 'hate': 'hate', 'dukhi': 'sad',
-    'boring': 'boring', 'nahi': 'not', 'fake': 'fake',
-    
-    # Common expressions
-    'bahut': 'very', 'bohot': 'very', 'kya': 'what', 'kaise': 'how',
-    'yaar': 'friend', 'bhai': 'brother', 'mera': 'my', 'tera': 'your',
-    'yeh': 'this', 'woh': 'that', 'thanks': 'thanks', 'shukriya': 'thanks',
-}
+print("✓ Sentiment Analysis App loaded!")
 
 app = Flask(__name__, template_folder='frontend', static_folder='frontend')
 
@@ -72,64 +42,6 @@ for filename, name, icon in model_info:
 print(f"✓ {len(models)} models loaded successfully!")
 
 
-def fallback_word_replace(text):
-    """Simple fallback: replace common Hinglish/Hindi words with English."""
-    words = re.findall(r"\b\w+\b", text.lower())
-    has_hinglish = any(w in FALLBACK_DICT for w in words)
-    
-    if not has_hinglish:
-        return text
-    
-    result = text.lower()
-    for hindi_word, eng_word in FALLBACK_DICT.items():
-        result = re.sub(r'\b' + hindi_word + r'\b', eng_word, result)
-    
-    return result
-
-
-def translate_to_english(text):
-    """Translate any input to English before preprocessing."""
-    if not text or not text.strip():
-        return text
-
-    original_text = text.strip()
-    
-    if not TRANSLATOR_AVAILABLE:
-        print(f"[Translation] Module not available - returning original")
-        return original_text
-    
-    # Strategy 1: Try Hindi source first
-    try:
-        print(f"[Translation] Trying Hindi source: {original_text[:50]}")
-        translator = GoogleTranslator(source='hi', target='en')
-        result = translator.translate(original_text)
-        if result and result.strip() and result.strip().lower() != original_text.lower():
-            print(f"[Translation] ✓ Hindi: {result[:50]}")
-            return result.strip()
-    except Exception as e:
-        print(f"[Translation] Hindi failed: {e}")
-    
-    # Strategy 2: Try auto-detect
-    try:
-        print(f"[Translation] Trying auto-detect: {original_text[:50]}")
-        translator = GoogleTranslator(source='auto', target='en')
-        result = translator.translate(original_text)
-        if result and result.strip():
-            print(f"[Translation] ✓ Auto: {result[:50]}")
-            return result.strip()
-    except Exception as e:
-        print(f"[Translation] Auto-detect failed: {e}")
-    
-    # Strategy 3: Fallback to word replacement for Hinglish
-    print(f"[Translation] Using Hinglish fallback mapping")
-    fallback_result = fallback_word_replace(original_text)
-    if fallback_result.lower() != original_text.lower():
-        print(f"[Translation] ✓ Fallback: {fallback_result[:50]}")
-        return fallback_result
-    
-    print(f"[Translation] No translation applied")
-    return original_text
-
 def clean_text(text):
     """Clean input text - matches training preprocessing"""
     if not text:
@@ -160,10 +72,8 @@ def predict():
                 'error': 'Please enter some text!'
             }), 400
 
-        translated_text = translate_to_english(text)
-        
         # Clean text
-        cleaned_text = clean_text(translated_text)
+        cleaned_text = clean_text(text)
         
         if not cleaned_text:
             return jsonify({
@@ -213,7 +123,6 @@ def predict():
         return jsonify({
             'predictions': predictions,
             'original_text': text,
-            'translated_text': translated_text,
             'cleaned_text': cleaned_text
         })
     
